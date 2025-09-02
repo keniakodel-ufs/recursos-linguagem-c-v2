@@ -1,0 +1,838 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recursos de Aprendizagem da Linguagem C</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #00ff88;
+            --secondary: #0099ff;
+            --accent: #ff6b35;
+            --bg-dark: #0a0a0f;
+            --bg-card: #1a1a25;
+            --bg-hover: #252535;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --text-muted: #606070;
+            --border: #2a2a35;
+            --shadow: rgba(0, 255, 136, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Background Animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 153, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 107, 53, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+        
+        @keyframes backgroundShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+        
+        .title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.3)); }
+            to { filter: drop-shadow(0 0 30px rgba(0, 255, 136, 0.6)); }
+        }
+        
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Navigation */
+        .nav {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 4rem;
+            padding: 2rem;
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-item {
+            display: block;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--bg-hover), var(--bg-card));
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            text-decoration: none;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-item:hover::before {
+            left: 100%;
+        }
+        
+        .nav-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px var(--shadow);
+            border-color: var(--primary);
+        }
+        
+        /* Sections */
+        .section {
+            margin-bottom: 4rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+            border-radius: 2px;
+        }
+        
+        .subsection-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--secondary);
+            margin: 2rem 0 1rem 0;
+            position: relative;
+            padding-left: 1rem;
+        }
+        
+        .subsection-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 100%;
+            background: var(--secondary);
+            border-radius: 2px;
+        }
+        
+        /* Resource Cards */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .resource-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .resource-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .resource-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .resource-card.highlight {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--bg-card), rgba(0, 255, 136, 0.05));
+        }
+        
+        .resource-card.premium {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, var(--bg-card), rgba(255, 107, 53, 0.05));
+        }
+        
+        .resource-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .resource-list {
+            list-style: none;
+        }
+        
+        .resource-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .resource-list li::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 0.8rem;
+        }
+        
+        .resource-list a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .resource-list a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+        
+        .resource-list strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--primary);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin: 0.25rem 0.25rem 0 0;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+        
+        .tag.premium {
+            background: rgba(255, 107, 53, 0.1);
+            color: var(--accent);
+            border-color: rgba(255, 107, 53, 0.3);
+        }
+        
+        .tag.warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+            border-color: rgba(255, 193, 7, 0.3);
+        }
+        
+        /* Summary Section */
+        .summary {
+            background: linear-gradient(135deg, var(--bg-card), rgba(0, 255, 136, 0.05));
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .summary h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .summary-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 6rem;
+            padding: 3rem;
+            background: linear-gradient(135deg, #1a1a25, #0a0a0f);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+        
+        .footer-logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .footer h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .footer p {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .footer a:hover {
+            color: var(--primary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .resource-card {
+                padding: 1.5rem;
+            }
+            
+            .nav {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">Linguagem C</h1>
+            <p class="subtitle">// Recursos completos para dominar C</p>
+        </header>
+        
+        <nav class="nav">
+            <a href="#cursos" class="nav-item">🎥 Cursos Online</a>
+            <a href="#livros" class="nav-item">📚 Livros & Apostilas</a>
+            <a href="#editores" class="nav-item">💻 IDEs & Editores</a>
+            <a href="#online" class="nav-item">🌐 Compiladores Online</a>
+            <a href="#mobile" class="nav-item">📱 Apps Móveis</a>
+        </nav>
+        
+        <section id="cursos" class="section">
+            <h2 class="section-title">🎥 Cursos Online</h2>
+            
+            <h3 class="subsection-title">Cursos Principais</h3>
+            <div class="resources-grid">
+                <div class="resource-card highlight">
+                    <h4 class="resource-title">Curso em Vídeo - Gustavo Guanabara</h4>
+                    <div class="tag">Gratuito</div>
+                    <div class="tag">40h de conteúdo</div>
+                    <ul class="resource-list">
+                        <li><strong>Site:</strong> <a href="https://www.cursoemvideo.com/" target="_blank">cursoemvideo.com</a></li>
+                        <li><strong>Especialidade:</strong> Curso de Algoritmo + Base para C</li>
+                        <li><strong>Professor:</strong> Gustavo Guanabara (20+ anos de experiência)</li>
+                        <li><strong>Diferencial:</strong> Metodologia didática e descontraída</li>
+                        <li><strong>GitHub:</strong> <a href="https://github.com/gustavoguanabara" target="_blank">Repositório completo</a></li>
+                    </ul>
+                </div>
+                
+                <div class="resource-card highlight">
+                    <h4 class="resource-title">CC50 - Harvard em Português</h4>
+                    <div class="tag">Gratuito</div>
+                    <div class="tag">Harvard</div>
+                    <ul class="resource-list">
+                        <li><strong>Link:</strong> <a href="https://www.estudarfora.org.br/cc50-v2/" target="_blank">estudarfora.org.br/cc50-v2</a></li>
+                        <li><strong>Origem:</strong> CS50 da Universidade de Harvard traduzido</li>
+                        <li><strong>Conteúdo:</strong> C, Python, SQL, JavaScript, HTML, CSS</li>
+                        <li><strong>Certificação:</strong> Disponível</li>
+                        <li><strong>Diferencial:</strong> Qualidade acadêmica internacional</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h3 class="subsection-title">Plataformas Adicionais</h3>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <h4 class="resource-title">Cursa</h4>
+                    <div class="tag">Gratuito</div>
+                    <ul class="resource-list">
+                        <li><strong>Link:</strong> <a href="https://cursa.com.br/home/courses?category=linguagem-c" target="_blank">cursa.com.br</a></li>
+                        <li><strong>Oferece:</strong> Múltiplos cursos de Linguagem C</li>
+                        <li><strong>Certificação:</strong> Gratuita disponível</li>
+                        <li><strong>Variedade:</strong> Diferentes níveis e abordagens</li>
+                    </ul>
+                </div>
+                
+                <div class="resource-card premium">
+                    <h4 class="resource-title">Alura</h4>
+                    <div class="tag premium">Pago</div>
+                    <ul class="resource-list">
+                        <li><strong>Link:</strong> <a href="https://www.alura.com.br/curso-online-introducao-a-programacao-com-c-parte-3" target="_blank">alura.com.br</a></li>
+                        <li><strong>Nota:</strong> Plataforma paga, mas referência em qualidade</li>
+                        <li><strong>Foco:</strong> Recursos avançados da linguagem</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="livros" class="section">
+            <h2 class="section-title">📚 Livros & Apostilas</h2>
+            
+            <h3 class="subsection-title">Livros Gratuitos</h3>
+            <div class="resources-grid">
+                <div class="resource-card highlight">
+                    <h4 class="resource-title">Computação Científica em Linguagem C - UFRGS</h4>
+                    <div class="tag">Gratuito</div>
+                    <div class="tag">Creative Commons</div>
+                    <ul class="resource-list">
+                        <li><strong>PDF:</strong> <a href="https://www.ufrgs.br/reamat/ComputacaoCientifica/livro/livro.pdf" target="_blank">Download PDF</a></li>
+                        <li><strong>Online:</strong> <a href="https://www.ufrgs.br/reamat/ComputacaoCientifica/livro/main.html" target="_blank">Versão Web</a></li>
+                        <li><strong>Autores:</strong> Esequias Sauter e Fábio Souto de Azevedo</li>
+                        <li><strong>Conteúdo:</strong> Básico até avançado, bibliotecas GSL e LAPACK</li>
+                    </ul>
+                </div>
+                
+                <div class="resource-card highlight">
+                    <h4 class="resource-title">Introdução à Programação em C - Casa do Código</h4>
+                    <div class="tag">Gratuito</div>
+                    <ul class="resource-list">
+                        <li><strong>GitHub:</strong> <a href="https://github.com/free-educa/books/blob/main/books/Introdução%20à%20programação%20em%20C%20-%20Os%20primeiros%20passos%20de%20um%20desenvolvedor.pdf" target="_blank">free-educa/books</a></li>
+                        <li><strong>Archive.org:</strong> <a href="https://archive.org/details/casa-do-codigo-introducao-a-programacao-em-c-os-primeiros-passos-de-um-desenvolvedor" target="_blank">Internet Archive</a></li>
+                        <li><strong>Diferencial:</strong> Abordagem prática para iniciantes</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h3 class="subsection-title">Apostilas Universitárias</h3>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <h4 class="resource-title">UFPE - Apostila de Linguagem C</h4>
+                    <div class="tag">Gratuito</div>
+                    <div class="tag">Acadêmico</div>
+                    <ul class="resource-list">
+                        <li><strong>PDF:</strong> <a href="https://www.cin.ufpe.br/~rrbs/AC_/LinguagemC/apostilaC.pdf" target="_blank">cin.ufpe.br</a></li>
+                        <li><strong>Nível:</strong> Acadêmico</li>
+                    </ul>
+                </div>
+                
+                <div class="resource-card">
+                    <h4 class="resource-title">UFCG - Programando na Linguagem C</h4>
+                    <div class="tag">Gratuito</div>
+                    <ul class="resource-list">
+                        <li><strong>Link:</strong> <a href="https://www.academia.edu/30748468/Aprendendo_a_Programar_Programando_na_Linguagem_C_Para_Iniciantes" target="_blank">academia.edu</a></li>
+                        <li><strong>Diferencial:</strong> Metodologia prática</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h3 class="subsection-title">Guias e Manuais</h3>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <h4 class="resource-title">ISO/IEC 9899 - Padrão Oficial C23</h4>
+                    <div class="tag warning">Draft Gratuito</div>
+                    <ul class="resource-list">
+                        <li><strong>Oficial:</strong> <a href="https://www.iso.org/standard/82075.html" target="_blank">ISO/IEC 9899:2024</a></li>
+                        <li><strong>Draft:</strong> <a href="https://www.iso-9899.info/wiki/The_Standard" target="_blank">iso-9899.info</a></li>
+                        <li><strong>Versão:</strong> C23 (outubro 2024)</li>
+                        <li><strong>Conteúdo:</strong> Especificação completa da linguagem</li>
+                    </ul>
+                </div>
+                
+                <div class="resource-card highlight">
+                    <h4 class="resource-title">FreeCodeCamp Brasil</h4>
+                    <div class="tag">Gratuito</div>
+                    <div class="tag">Regra 80/20</div>
+                    <ul class="resource-list">
+                        <li><strong>Link:</strong> <a href="https://www.freecodecamp.org/portuguese/news/o-manual-do-iniciante-em-c-aprenda-o-basico-sobre-a-linguagem-de-programacao-c-em-apenas-algumas-horas/" target="_blank">FreeCodeCamp</a></li>
+                        <li><strong>Método:</strong> 80% da linguagem em 20% do tempo</li>
+                        <li><strong>Formatos:</strong> PDF e ePub disponíveis</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h3 class="subsection-title">Livro Pago (Referência)</h3>
+            <div class="resources-grid">
+                <div class="resource-card premium">
+                    <h4 class="resource-title">Linguagem C - Completa e Descomplicada</h4>
+                    <div class="tag premium">Pago</div>
+                    <div class="tag">Referência Nacional</div>
+                    <ul class="resource-list">
+                        <li><strong>Autor:</strong> André Backes</li>
+                        <li><strong>Editora:</strong> GEN LTC (2ª edição, 2018)</li>
+                        <li><strong>ISBN:</strong> 9788535291063 | 448 páginas</li>
+                        <li><strong>Onde:</strong> Amazon, Mercado Livre, Estante Virtual</li>
+                        <li><strong>Extra:</strong> Site complementar com vídeo-aulas</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="editores" class="section">
+            <h2 class="section-title">💻 IDEs & Editores</h2>
+            
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <h4 class="resource-title">Sublime Text</h4>
+                    <div class="tag">Sofisticado</div>
+                    <ul class="resource-list">
+                        <li><strong>Link:</strong> <a href="https://www.sublimetext.com/" target="_blank">sublimetext.com</a></li>
+                        <li><strong>Recursos:</strong> Múltiplas seleções, temas adaptativos, plugins</li>
+                        <li><strong>Diferencial:</strong> Interface fluida, suporte a GPU</li>
+                        <li><strong>Para C:</strong> Requer configuração do build system</li>
+                    </ul>
+                </div>
+                
+                <div class="resource-card highlight">
+                    <h4 class="resource-title">Code::Blocks</h4>
+                    <div class="tag">IDE Completa</div>
+                    <div class="tag">Gratuito</div>
+                    <ul class="resource-list">
+                        <li><strong>Site:</strong> <a href="https://www.codeblocks.org/" target="_blank">codeblocks.org</a></li>
+                        <li><strong>Download:</strong> <a href="https://sourceforge.net/projects/codeblocks/" target="_blank">SourceForge</a></li>
+                        <li><strong>Suporte:</strong> 20+ compiladores</li>
+                        <li><strong>Diferencial:</strong> Arquitetura baseada em plugins</li>
+                    </ul>
+                </div>
+                
+                <div class="resource-card highlight">
+                    <h4 class="resource-title">Visual Studio Code</h4>
+                    <div class="tag">Microsoft</div>
+                    <div class="tag">Gratuito</div>
+                    <ul class="resource-list">
+                        <li><strong>Link:</strong> <a href="https://code.visualstudio.com/" target="_blank">code.visualstudio.com</a></li>
+                        <li><strong>Recursos:</strong> IntelliSense, debugging, Git</li>
+                        <li><strong>Extensões:</strong> Suporte nativo C/C++</li>
+                        <li><strong>Diferencial:</strong> Integração com GitHub Copilot</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="online" class="section">
+            <h2 class="section-title">🌐 Compiladores Online</h2>
+            
+            <div class="resources-grid">
+                <div class="resource-card highlight">
+                    <h4 class="resource-title">Programiz Online C Compiler</h4>
+                    <div class="tag">Interface Limpa</div>
+                    <ul class="resource-list">
+                        <li><strong>Link:</strong> <a href="https://www.programiz.com/c-programming/online-compiler/" target="_blank">programiz.com</a></li>
+                        <li><strong>Recursos:</strong> Code sharing, dark mode</li>
+                        <li><strong>Diferencial:</strong> Integração com tutoriais</li>
+                        <li><strong>Pro:</strong> <a href="https://programiz.pro/ide/c" target="_blank">Versão Premium</a></li>
+                    </ul>
+                </div>
+                
+                <div class="resource-card highlight">
+                    <h4 class="resource-title">OnlineGDB</h4>
+                    <div class="tag">Debugger Completo</div>
+                    <ul class="resource-list">
+                        <li><strong>Link:</strong> <a href="https://www.onlinegdb.com/online_c_compiler" target="_blank">onlinegdb.com</a></li>
+                        <li><strong>Recursos:</strong> Compiler + Debugger, suporte GCC</li>
+                        <li><strong>Debugger:</strong> Suporte completo ao GDB</li>
+                        <li><strong>Diferencial:</strong> Debug online completo, save projects</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="mobile" class="section">
+            <h2 class="section-title">📱 Apps Móveis</h2>
+            
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <h4 class="resource-title">Learn C Programming</h4>
+                    <div class="tag">Google Play</div>
+                    <ul class="resource-list">
+                        <li><strong>Link:</strong> <a href="https://play.google.com/store/apps/details?id=c.programming&hl=pt" target="_blank">Google Play Store</a></li>
+                        <li><strong>Conteúdo:</strong> 90+ programas com comentários</li>
+                        <li><strong>Recursos:</strong> Perguntas e respostas, tutoriais</li>
+                        <li><strong>Interface:</strong> Simples e intuitiva</li>
+                    </ul>
+                </div>
+                
+                <div class="resource-card">
+                    <h4 class="resource-title">Coding C - The Offline C Language</h4>
+                    <div class="tag">Offline</div>
+                    <div class="tag">Android</div>
+                    <ul class="resource-list">
+                        <li><strong>Play Store:</strong> <a href="https://play.google.com/store/apps/details?id=com.kvassyu.coding2.c&hl=en_US" target="_blank">Google Play</a></li>
+                        <li><strong>Diferencial:</strong> IDE offline, não requer internet</li>
+                        <li><strong>Recursos:</strong> Compiler integrado, auto-save, syntax highlight</li>
+                        <li><strong>Ideal para:</strong> Estudantes sem acesso a laptop/PC</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section class="summary">
+            <h2>✅ Características dos Recursos</h2>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="summary-icon">💰</span>
+                    <span>Gratuitos (exceto menções indicadas)</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-icon">🇧🇷</span>
+                    <span>Em português brasileiro</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-icon">📊</span>
+                    <span>Diferentes níveis de dificuldade</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-icon">🔄</span>
+                    <span>Atualizados e relevantes</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-icon">🌐</span>
+                    <span>Compiladores funcionam em qualquer navegador</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-icon">📱</span>
+                    <span>Recursos para desktop e mobile</span>
+                </div>
+            </div>
+        </section>
+        
+        <footer class="footer">
+            <div class="footer-logo">🤖</div>
+            <h3>Compilado com Inteligência Artificial</h3>
+            <p>Este guia foi organizado e estruturado com auxílio do <strong>Claude</strong></p>
+            <p>Desenvolvido por <a href="https://www.anthropic.com" target="_blank">Anthropic</a></p>
+            <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 1rem;">
+                Recursos selecionados e verificados • Última atualização: Setembro 2025
+            </p>
+        </footer>
+    </div>
+    
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('.nav-item').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+        
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all sections and cards
+        document.querySelectorAll('.section, .resource-card').forEach(el => {
+            el.classList.add('fade-in');
+            observer.observe(el);
+        });
+        
+        // Add stagger animation to resource cards
+        document.querySelectorAll('.resources-grid').forEach(grid => {
+            const cards = grid.querySelectorAll('.resource-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+        
+        // Easter egg: Konami code
+        let konamiCode = [];
+        const konami = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+        
+        document.addEventListener('keydown', function(e) {
+            konamiCode.push(e.keyCode);
+            if (konamiCode.length > konami.length) {
+                konamiCode.shift();
+            }
+            
+            if (konamiCode.join('') === konami.join('')) {
+                document.body.style.filter = 'hue-rotate(180deg)';
+                setTimeout(() => {
+                    document.body.style.filter = '';
+                }, 3000);
+                konamiCode = [];
+            }
+        });
+        
+        // Performance optimization: lazy loading for external links
+        document.querySelectorAll('a[target="_blank"]').forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                const linkElement = document.createElement('link');
+                linkElement.rel = 'preconnect';
+                linkElement.href = new URL(this.href).origin;
+                document.head.appendChild(linkElement);
+            }, { once: true });
+        });
+    </script>
+</body>
+</html>
