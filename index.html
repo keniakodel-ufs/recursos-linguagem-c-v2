@@ -458,6 +458,40 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Download Button */
+            .download-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.75rem 1.5rem;
+                background: linear-gradient(135deg, var(--primary), var(--secondary));
+                color: var(--bg-dark);
+                border: none;
+                border-radius: 12px;
+                font-weight: 600;
+                font-size: 0.9rem;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                margin: 1rem 0;
+                text-decoration: none;
+                font-family: 'JetBrains Mono', monospace;
+            }
+            
+            .download-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+                filter: brightness(1.1);
+            }
+            
+            .download-btn:active {
+                transform: translateY(0);
+            }
+            
+            .download-icon {
+                font-size: 1.1rem;
+                animation: bounce 2s infinite;
+            }
     </style>
 </head>
 <body>
